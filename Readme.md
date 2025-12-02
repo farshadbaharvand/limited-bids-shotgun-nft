@@ -40,23 +40,12 @@ The `LimitedBidsShotgun` contract allows two NFT owners to participate in a **li
 - Once finished, the initiator receives the NFT, and both owners can withdraw their funds.
 
 ### 2. State Diagram
-
 ```mermaid
-stateDiagram
-State: Idle (Ready)
-       |
-       | initiate()
-       v
-State: Active (Ongoing)
-       |
-       | counterOffer() [up to maxBids]
-       v
-State: Finished (Complete)
-       |
-       | withdraw()
-       v
-Funds and NFT retrieved
-
+flowchart TD
+    Idle[State: Idle (Ready)] -->|initiate()| Active[State: Active (Ongoing)]
+    Active -->|counterOffer() [up to maxBids]| Active
+    Active -->|finish()| Finished[State: Finished (Complete)]
+    Finished -->|withdraw()| Funds[Funds and NFT retrieved]
 ```
 
 ### 3. Key Functions

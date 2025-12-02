@@ -42,7 +42,7 @@ The `LimitedBidsShotgun` contract allows two NFT owners to participate in a **li
 ### 2. State Diagram
 
 ```mermaid
-
+stateDiagram
 State: Idle (Ready)
        |
        | initiate()

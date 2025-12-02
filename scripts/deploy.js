@@ -1,23 +1,28 @@
-
-// Hardhat deploy script
-const hre = require("hardhat");
+import { ethers } from "hardhat";
 
 async function main() {
-  const [deployer, a, b] = await hre.ethers.getSigners();
+  const [ownerA, ownerB] = await ethers.getSigners();
 
-  const MockNFT = await hre.ethers.getContractFactory("MockNFT");
-  const nft = await MockNFT.deploy();
-  await nft.waitForDeployment();
-  const addrNFT = await nft.getAddress();
+  const NFT_ADDRESS = "0x0000000000000000000000000000000000000001";
+  const TOKEN_ID = 1;
+  const MAX_BIDS = 5;
 
-  await nft.mint(a.address, 1);
+  const Shotgun = await ethers.getContractFactory("LimitedBidsShotgun");
 
-  const Shotgun = await hre.ethers.getContractFactory("LimitedBidsShotgun");
-  const shotgun = await Shotgun.deploy(addrNFT,1,a.address,b.address,5);
-  await shotgun.waitForDeployment();
+  const contract = await Shotgun.deploy(
+    NFT_ADDRESS,
+    TOKEN_ID,
+    ownerA.address,
+    ownerB.address,
+    MAX_BIDS
+  );
 
-  console.log("NFT:", addrNFT);
-  console.log("Shotgun:", await shotgun.getAddress());
+  await contract.waitForDeployment();
+
+  console.log("Shotgun deployed at:", await contract.getAddress());
 }
 
-main().catch(console.error);
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

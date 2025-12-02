@@ -1,4 +1,3 @@
-~~~~markdown
 # LimitedBidsShotgun NFT Project
 
 This project implements an Ethereum smart contract for managing an NFT using a **Limited Shotgun Auction** mechanism, along with a **MockNFT** contract for testing purposes. The README includes project structure, workflow, and instructions for deployment and testing.
@@ -7,7 +6,8 @@ This project implements an Ethereum smart contract for managing an NFT using a *
 
 ## 🔹 Project Structure
 
-```
+```mermaid
+
 .
 ├── contracts/
 │   ├── LimitedBidsShotgun.sol   # Main Shotgun contract
@@ -21,6 +21,7 @@ This project implements an Ethereum smart contract for managing an NFT using a *
 ├── hardhat.config.js            # Hardhat configuration
 ├── package.json                 # npm configuration
 └── .gitignore                   # Git ignore rules
+
 ```
 
 💡 **Note:** `node_modules` should not be pushed to GitHub.
@@ -40,7 +41,8 @@ The `LimitedBidsShotgun` contract allows two NFT owners to participate in a **li
 
 ### 2. State Diagram
 
-```
+```mermaid
+
 State: Idle (Ready)
        |
        | initiate()
@@ -54,6 +56,7 @@ State: Finished (Complete)
        | withdraw()
        v
 Funds and NFT retrieved
+
 ```
 
 ### 3. Key Functions
@@ -71,7 +74,7 @@ Funds and NFT retrieved
 
 ### Step 1: Deploy MockNFT
 
-~~~~
+~~~~js
 const NFT = await ethers.getContractFactory("MockNFT");
 const nft = await NFT.deploy();
 await nft.deployed();
@@ -81,7 +84,7 @@ const tokenId = await nft.mint(ownerA.address);
 
 ### Step 2: Deploy LimitedBidsShotgun
 
-~~~~
+~~~~js
 const Shotgun = await ethers.getContractFactory("LimitedBidsShotgun");
 const shotgun = await Shotgun.deploy(
   nft.address,
@@ -98,7 +101,7 @@ await nft.connect(ownerA).transferFrom(ownerA.address, shotgun.address, tokenId)
 
 ### Step 3: Initiate Auction
 
-~~~~
+~~~~js
 await shotgun.connect(ownerA).initiate(
   ethers.utils.parseEther("2"), // total price 2 ETH
   { value: ethers.utils.parseEther("1") } // half of total price
@@ -107,7 +110,7 @@ await shotgun.connect(ownerA).initiate(
 
 ### Step 4: Counter Offer
 
-~~~~
+~~~~js
 await shotgun.connect(ownerB).counterOffer(
   ethers.utils.parseEther("3"), // new price 3 ETH
   { value: ethers.utils.parseEther("1.5") } // half of new price
@@ -116,13 +119,13 @@ await shotgun.connect(ownerB).counterOffer(
 
 ### Step 5: Finish Auction
 
-~~~~
+~~~~js
 await shotgun.connect(ownerA).finish();
 ~~~~
 
 ### Step 6: Withdraw Funds
 
-~~~~
+~~~~js
 await shotgun.connect(ownerA).withdraw();
 await shotgun.connect(ownerB).withdraw();
 ~~~~
@@ -133,19 +136,19 @@ await shotgun.connect(ownerB).withdraw();
 
 1. Install dependencies:
 
-~~~~
+~~~~bash
 npm install
 ~~~~
 
 2. Compile contracts:
 
-~~~~
+~~~~bash
 npx hardhat compile
 ~~~~
 
 3. Run tests:
 
-~~~~
+~~~~bash
 npx hardhat test
 ~~~~
 
@@ -161,5 +164,5 @@ npx hardhat test
 - ⚠️ The `withdraw()` function lacks `ReentrancyGuard` in this example; for production, always protect against reentrancy attacks.
 - Test all workflows thoroughly before deploying to mainnet.
 
-~~~~
+
 

@@ -115,7 +115,7 @@ flowchart TD
         OwnerA[OwnerA counterOffer] --> Active
     end
     
-    Active -->|maxBids reached or initiator finishes| Finish[finish() called]
+    Active -->|maxBids reached or initiator finishes| Finish[finish called]
     Finish --> NFTTransfer[NFT transferred to highestBidder]
     Finish --> Withdraw[Owners withdraw ETH]
     Withdraw --> End[Auction Complete]

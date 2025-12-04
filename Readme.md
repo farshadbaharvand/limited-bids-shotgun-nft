@@ -42,7 +42,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    Start[NFT co-owned by 2 users] -->|Initiator calls initiate(), half deposit| Active[Auction Active]
+    Start[NFT co-owned by 2 users] -->|Initiator calls initiate, half deposit| Active[Auction Active]
     Active -->|Counter-offer by opposite owner| Update[Update currentPrice & highestBidder]
     Update -->|Repeat until maxBids reached or initiator finishes| Finished[Auction Finished]
     Finished -->|NFT transferred to highestBidder| Winner[NFT Ownership Updated]

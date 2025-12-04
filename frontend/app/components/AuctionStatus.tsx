@@ -4,7 +4,16 @@ import { useShotgun } from '../../hooks/useShotgun';
 import { formatEther } from 'viem';
 
 export default function AuctionStatus() {
-  const { currentPrice, bidsCount, state, ownerA, ownerB, initiator } = useShotgun();
+  const {
+    currentPrice,
+    bidsCount,
+    state,
+    ownerA,
+    ownerB,
+    initiator,
+    participants,
+    isLoading
+  } = useShotgun();
 
   const formatAddress = (address: string | undefined) => {
     if (!address) return '—';
@@ -65,8 +74,23 @@ export default function AuctionStatus() {
           </div>
           <div>
             <div className="text-sm font-medium text-gray-500 mb-1">Initiator</div>
-            <div className="font-mono text-sm">{formatAddressSafe(initiator)}</div>
+            <div className="font-mono text-sm">{isLoading ? 'Loading…' : formatAddressSafe(initiator)}</div>
           </div>
+        </div>
+
+        <div className="mt-6">
+          <div className="text-sm font-medium text-gray-500 mb-2">Active Participants</div>
+          {participants.length ? (
+            <ul className="space-y-1 font-mono text-sm">
+              {participants.map((participant) => (
+                <li key={participant}>{formatAddressSafe(participant)}</li>
+              ))}
+            </ul>
+          ) : (
+            <div className="text-sm text-gray-500">
+              {isLoading ? 'Loading participants…' : 'No participants yet.'}
+            </div>
+          )}
         </div>
       </div>
     </div>

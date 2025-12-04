@@ -19,8 +19,6 @@ contract LimitedBidsShotgun {
     uint256 public bidsCount;
     State public state;
     address public initiator;
-    address public lastBidder;
-    address public highestBidder;
     mapping(address => uint256) public balances;
 
     constructor(
@@ -46,8 +44,6 @@ contract LimitedBidsShotgun {
         currentPrice = price;
         bidsCount = 0;
         initiator = msg.sender;
-        lastBidder = msg.sender;      // Initiator has bid first
-        highestBidder = msg.sender;   // Initiator is initial highest bidder
         balances[msg.sender] += msg.value;
         state = State.Active;
     }
@@ -55,7 +51,7 @@ contract LimitedBidsShotgun {
     function counterOffer(uint256 newPrice) external payable {
         require(state == State.Active, "Not active");
         require(msg.sender == ownerA || msg.sender == ownerB, "Not a participant");
-        require(msg.sender != lastBidder, "Wait for your turn"); // Enforce turn
+        require(msg.sender != initiator, "Initiator cannot counter");
         require(newPrice > currentPrice, "Price too low");
         require(bidsCount < maxBids, "Bid limit reached");
 
@@ -64,17 +60,14 @@ contract LimitedBidsShotgun {
 
         currentPrice = newPrice;
         balances[msg.sender] += msg.value;
-        lastBidder = msg.sender;
-        highestBidder = msg.sender;
         bidsCount++;
     }
 
     function finish() external {
         require(state == State.Active, "Not active");
-        require(msg.sender == initiator, "Only initiator can finish");
+        require(msg.sender == initiator, "Only initiator");
 
-        // NFT goes to the highest bidder
-        nft.transferFrom(address(this), highestBidder, tokenId);
+        nft.transferFrom(address(this), initiator, tokenId);
         state = State.Finished;
     }
 

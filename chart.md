@@ -95,3 +95,36 @@ sequenceDiagram
 
     Note over Contract: Auction complete, NFT ownership updated, all funds handled
 ```
+
+
+---
+
+# 11
+
+# Limited Bids Shotgun Auction - Contract Flow (Simplified)
+
+```mermaid
+flowchart TD
+    Start[NFT co-owned by OwnerA & OwnerB] --> Initiate[Owner calls initiate(), half deposit]
+    Initiate --> Active[Auction Active: State=Active, currentPrice set, highestBidder=Initiator]
+    
+    subgraph Bidding Loop
+        direction TB
+        OwnerB[OwnerB counterOffer()] --> Active
+        OwnerA[OwnerA counterOffer()] --> Active
+    end
+    
+    Active -->|maxBids reached or initiator calls finish()| Finish[finish() called]
+    Finish --> NFTTransfer[NFT transferred to highestBidder]
+    Finish --> Withdraw[Owners withdraw ETH]
+    Withdraw --> End[Auction Complete]
+
+    style Start fill:#f9f,stroke:#333,stroke-width:1px
+    style Initiate fill:#8bf,stroke:#333,stroke-width:1px
+    style Active fill:#bbf,stroke:#333,stroke-width:1px
+    style Bidding Loop fill:#def,stroke:#333,stroke-width:1px,stroke-dasharray: 5 5
+    style Finish fill:#8f8,stroke:#333,stroke-width:1px
+    style NFTTransfer fill:#bfb,stroke:#333,stroke-width:1px
+    style Withdraw fill:#ffb,stroke:#333,stroke-width:1px
+    style End fill:#fdd,stroke:#333,stroke-width:1px
+```

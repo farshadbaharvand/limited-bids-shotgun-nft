@@ -1,35 +1,97 @@
-'''mermaid
+# 1 Limited Bids Shotgun Auction - Introduction Diagram
 
+This diagram shows the basic idea of the project: resolving NFT co-ownership disputes via a turn-based shotgun auction.
+
+```mermaid
+flowchart TD
+    NFT[NFT co-owned by 2 users] -->|Disagreement| Auction[Turn-Based Shotgun Auction]
+    Auction -->|Highest Bidder Wins| Winner[NFT Ownership Updated]
+    Auction -->|Other withdraws funds| Loser[ETH Returned]
+    
+    style NFT fill:#f9f,stroke:#333,stroke-width:1px
+    style Auction fill:#bbf,stroke:#333,stroke-width:1px
+    style Winner fill:#bfb,stroke:#333,stroke-width:1px
+    style Loser fill:#fdd,stroke:#333,stroke-width:1px
+```
+
+---
+
+# 2 Limited Bids Shotgun Auction - Contract & Frontend Structure
+
+This diagram shows the main components of the LimitedBidsShotgun contract and the corresponding frontend actions for interacting with the auction.
+
+```mermaid
+flowchart TD
+    UI[Frontend Interface] --> Status[Auction Status]
+    Status --> State[State: Idle / Active / Finished]
+    Status --> Price[Current Price]
+    Status --> Bids[Bids Count]
+    Status --> Participants[Participants]
+    Participants --> OwnerA[Owner A]
+    Participants --> OwnerB[Owner B]
+    Participants --> Initiator[Initiator]
+
+    UI --> Actions[User Actions]
+    Actions --> Initiate[Initiate Auction]
+    Actions --> Counter[Counter Offer]
+    Actions --> Finish[Finish Auction]
+    Actions --> Withdraw[Withdraw Funds]
+
+    style UI fill:#bbf,stroke:#333,stroke-width:1px
+    style Status fill:#8bf,stroke:#333,stroke-width:1px
+    style State fill:#f9f,stroke:#333,stroke-width:1px
+    style Price fill:#fdd,stroke:#333,stroke-width:1px
+    style Bids fill:#fdd,stroke:#333,stroke-width:1px
+    style Participants fill:#fdd,stroke:#333,stroke-width:1px
+    style OwnerA fill:#bfb,stroke:#333,stroke-width:1px
+    style OwnerB fill:#bfb,stroke:#333,stroke-width:1px
+    style Initiator fill:#bfb,stroke:#333,stroke-width:1px
+    style Actions fill:#8bf,stroke:#333,stroke-width:1px
+    style Initiate fill:#8f8,stroke:#333,stroke-width:1px
+    style Counter fill:#8f8,stroke:#333,stroke-width:1px
+    style Finish fill:#8f8,stroke:#333,stroke-width:1px
+    style Withdraw fill:#8f8,stroke:#333,stroke-width:1px
+
+```
+
+
+
+---
+
+# 2
+# Limited Bids Shotgun Auction - Contract Flow
+
+This sequence diagram shows the interaction between the two owners and the contract during a shotgun auction.
+
+```mermaid
 sequenceDiagram
     participant OwnerA
     participant OwnerB
     participant Contract
 
-    Note over OwnerA,OwnerB: Auction not started yet (State = Idle)
+    Note over OwnerA,OwnerB: Auction starts with two co-owners of an NFT
 
-    OwnerA->>Contract: initiate(price = 2 ETH) + send 1 ETH
-    Contract-->>OwnerA: State = Active, initiator = OwnerA, currentPrice = 2 ETH, bidsCount = 0
-    Note over OwnerA,OwnerB: OwnerA cannot make counter offers
+    OwnerA->>Contract: initiate(price, half deposit)
+    Contract-->>OwnerA: Auction active, currentPrice set, highestBidder=OwnerA
+    Note over Contract: State = Active, bidsCount=0
 
-    OwnerB->>Contract: counterOffer(newPrice = 2.5 ETH) + send 1.25 ETH
-    Contract-->>OwnerB: currentPrice = 2.5 ETH, bidsCount = 1
-    Note over OwnerA,OwnerB: OwnerA can now counter
+    OwnerB->>Contract: counterOffer(newPrice, half deposit)
+    Contract-->>OwnerB: currentPrice updated, highestBidder=OwnerB, bidsCount++
 
-    OwnerA->>Contract: counterOffer(newPrice = 3 ETH) + send 1.5 ETH
-    Contract-->>OwnerA: currentPrice = 3 ETH, bidsCount = 2
+    OwnerA->>Contract: counterOffer(newPrice, half deposit)
+    Contract-->>OwnerA: currentPrice updated, highestBidder=OwnerA, bidsCount++
 
-    OwnerB->>Contract: counterOffer(newPrice = 3.5 ETH) + send 1.75 ETH
-    Contract-->>OwnerB: currentPrice = 3.5 ETH, bidsCount = 3
-
-    Note over OwnerA,OwnerB: Bidding continues until maxBids is reached
+    Note over Contract: Repeat until maxBids reached or initiator calls finish()
 
     OwnerA->>Contract: finish()
-    Contract-->>OwnerA: NFT transferred to initiator (OwnerA)
-    Contract-->>OwnerB: Bidding ended, balances can be withdrawn
+    Contract-->>OwnerA: NFT transferred to highestBidder
+    Contract-->>OwnerB: Auction finished
 
     OwnerA->>Contract: withdraw()
-    Contract-->>OwnerA: 1.5 ETH returned
+    Contract-->>OwnerA: ETH returned if not highestBidder
 
     OwnerB->>Contract: withdraw()
-    Contract-->>OwnerB: 1.25 + 1.75 ETH returned
-'''
+    Contract-->>OwnerB: ETH returned if not highestBidder
+
+    Note over Contract: Auction complete, NFT ownership updated, all funds handled
+```

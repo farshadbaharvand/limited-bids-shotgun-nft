@@ -9,9 +9,13 @@ export type ContractDefinition = {
   abiPath: string;
 };
 
-const limitedBidsShotgunAbi =
-  (LimitedBidsShotgunArtifact as AbiShape).abi ?? LimitedBidsShotgunArtifact;
-const mockNftAbi = (MockNFTArtifact as AbiShape).abi ?? MockNFTArtifact;
+//const limitedBidsShotgunAbi =
+//  (LimitedBidsShotgunArtifact as AbiShape).abi ?? LimitedBidsShotgunArtifact;
+//const mockNftAbi = (MockNFTArtifact as AbiShape).abi ?? MockNFTArtifact;
+
+const limitedBidsShotgunAbi = (LimitedBidsShotgunArtifact as any).abi;
+const mockNftAbi = (MockNFTArtifact as any).abi;
+
 
 export const CONTRACTS = {
   LimitedBidsShotgun: {

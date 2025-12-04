@@ -1,7 +1,7 @@
-\"use client\";
+"use client";
 
-import { useWriteContract } from \"wagmi\";
-import { getContractDefinition, type ContractName } from \"./constants\";
+import { useWriteContract } from "wagmi";
+import { getContractDefinition, type ContractName } from "./constants";
 
 interface UseScaffoldWriteContractProps {
   contractName: ContractName;
@@ -23,7 +23,7 @@ export function useScaffoldWriteContract({
   const writeAsync = async (options?: WriteOptions) => {
     const args = options?.args ?? [];
     const rawValue = options?.overrides?.value;
-    const value = typeof rawValue === \"string\" ? BigInt(rawValue) : rawValue;
+    const value = typeof rawValue === "string" ? BigInt(rawValue) : rawValue;
 
     return writeContractAsync({
       address,

@@ -1,7 +1,7 @@
-\"use client\";
+"use client";
 
-import { useReadContract } from \"wagmi\";
-import { getContractDefinition, type ContractName } from \"./constants\";
+import { useReadContract } from "wagmi";
+import { getContractDefinition, type ContractName } from "./constants";
 
 interface UseScaffoldReadContractProps {
   contractName: ContractName;
